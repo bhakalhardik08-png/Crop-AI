@@ -1,1 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
 
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets / credentials
+.env
+.env.*
+!.env.example
+credentials.json
+service-account*.json
+*service_account*.json
+*.pem
+*.key
+
+# Local datasets / private data
+data/
+dataset/
+datasets/
+raw_data/
+processed_data/
+01_Raw_Data/
+02_Additional_Data/
+01_Dataset/
+02_Training_Data/
+03_Training_Data/
+*.zip
+*.xml
+*.csv
+
+# Model artifacts that may be large
+# Uncomment if you decide to host models outside GitHub:
+# *.keras
+# *.h5
+# *.hdf5
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs / temporary files
+*.log
+*.tmp
+*.cache
