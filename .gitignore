@@ -34,11 +34,12 @@ processed_data/
 *.xml
 *.csv
 
-# Model artifacts that may be large
-# Uncomment if you decide to host models outside GitHub:
-# *.keras
-# *.h5
-# *.hdf5
+# Model artifacts
+# Keep only the two final champion models in the repository.
+*.keras
+!model/
+!model/CROP_MODEL_CHAMPION_91_76_TEST.keras
+!model/CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras
 
 # OS / IDE
 .DS_Store
@@ -49,4 +50,4 @@ Thumbs.db
 # Logs / temporary files
 *.log
 *.tmp
-*.cache
+*.cache/
