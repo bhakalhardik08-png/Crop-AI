@@ -100,9 +100,9 @@ The main training and evaluation workflow is available in `notebook/Crop_AI_Proj
 - [x] Model evaluation
 - [ ] More real-world robustness testing
 - [ ] Web/mobile deployment
-- [ ] Crop quality analysis
-- [ ] A/B/C/Reject quality grading
-- [ ] Farmer-focused prediction interface
+- [x] Crop quality analysis
+- [x] A/B/C/Reject quality grading
+- [x] Farmer-focused prediction interface
 
 ## ⚠️ Limitations
 
