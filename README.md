@@ -150,7 +150,7 @@ The notebook contains the dataset preparation, model training/evaluation, crop p
 
 ## ⚠️ Limitations
 
-This project is a university/research prototype. Predictions may be affected by image quality, lighting, backgrounds, crop varieties, camera conditions, and differences between training and real-world images.
+This project is a research prototype. Predictions may be affected by image quality, lighting, backgrounds, crop varieties, camera conditions, and differences between training and real-world images.
 
 The quality-grading component is currently designed around **Guava quality labels**, so A/B/C/Reject should not be assumed to apply to every crop category.
 
@@ -176,4 +176,4 @@ If you find Crop AI useful for learning, experimentation, or agricultural AI res
 
 ---
 
-**Built as a university project exploring AI, computer vision, and agriculture. 🌾🤖**
+**Built by a first year student  who is exploring AI, computer vision, and agriculture. 🌾🤖**
