@@ -34,8 +34,7 @@ processed_data/
 *.xml
 *.csv
 
-# Model artifacts
-# Keep only the two final champion models in the repository.
+# Model files: keep ONLY the two final champion models in Git
 *.keras
 !model/
 !model/CROP_MODEL_CHAMPION_91_76_TEST.keras
