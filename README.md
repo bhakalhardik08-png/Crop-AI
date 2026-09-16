@@ -2,46 +2,32 @@
 
 ### Computer Vision for Crop Recognition + Guava Quality Analysis 🤖🌱
 
-[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://www.tensorflow.org/)
-[![Keras](https://img.shields.io/badge/Keras-Deep%20Learning-red.svg)](https://keras.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+Crop AI is a deep-learning agricultural computer-vision project using a two-stage pipeline:
 
-Crop AI is a deep-learning agricultural computer-vision project that uses a **two-stage pipeline**:
+1. **Crop classification:** Banana, Guava, Maize, Rice, or Wheat.
+2. **Quality grading:** when the predicted crop is Guava, a second model predicts **A / B / C / Reject**.
 
-1. **Crop classification** — identifies Banana, Guava, Maize, Rice, or Wheat.
-2. **Quality grading** — when the predicted crop is Guava, a second model grades it as **A / B / C / Reject**.
-
-> **Important:** The quality model is currently trained for Guava only. The project does not claim A/B/C/Reject grading for all five crops.
-
----
+> **Important:** Quality grading is currently available for Guava only.
 
 ## 🚀 Pipeline
 
 ```text
 📷 Crop Image
       ↓
-🖼️ Resize to 224 × 224
+🖼️ 224 × 224
       ↓
-🧠 EfficientNetB0 — Crop Classifier
+🧠 EfficientNetB0 Crop Classifier
       ↓
 🌾 Banana / Guava / Maize / Rice / Wheat
       ↓
-   Is it Guava?
-     ↙       ↘
-   YES        NO
-    ↓          ↓
-🍈 EfficientNetB0   Quality: N/A
- Quality Model
-    ↓
- A / B / C / Reject
+🍈 If Guava → EfficientNetB0 Quality Model
+      ↓
+🏷️ A / B / C / Reject
 ```
-
-The final system uses **two separately trained Keras models**, which makes the crop-recognition and quality-grading stages independently reusable.
 
 ## 🧠 Released Models
 
-| Model | Architecture | Classes | Recorded test accuracy |
+| Model | Architecture | Classes | Recorded Test Accuracy |
 |---|---|---|---:|
 | Crop Classification Champion | EfficientNetB0 | 5 crops | **91.76%** |
 | Guava Quality Champion | EfficientNetB0 | A / B / C / Reject | **78.27%** |
@@ -50,32 +36,24 @@ The final system uses **two separately trained Keras models**, which makes the c
 
 `model/CROP_MODEL_CHAMPION_91_76_TEST.keras`
 
-- EfficientNetB0 transfer learning
 - Input: 224 × 224 × 3
 - Classes: Banana, Guava, Maize, Rice, Wheat
 - Recorded final test accuracy: **91.76%**
-
-The training notebook shows the EfficientNetB0 backbone, augmentation, global average pooling, dropout, and a 5-class softmax head. citeturn31file0
+- Uses EfficientNetB0 transfer learning with augmentation and a 5-class softmax head.
 
 ### Guava Quality Champion
 
 `model/CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras`
 
-- EfficientNetB0
 - Input: 224 × 224 × 3
 - Classes: A, B, C, Reject
 - Recorded final test accuracy: **78.27%**
-- Evaluation test set reported in the notebook: **520 images**
-
-The quality model uses EfficientNetB0 with augmentation, global average pooling, dropout, and a 4-class softmax head. citeturn30file1
-
----
+- Reported test set: 520 images
+- Uses EfficientNetB0 with augmentation and a 4-class softmax head.
 
 ## 📊 Dataset
 
-### Crop Classification
-
-**14,194 images total:**
+### Crop Classification Dataset
 
 | Crop | Images |
 |---|---:|
@@ -86,41 +64,30 @@ The quality model uses EfficientNetB0 with augmentation, global average pooling,
 | Guava | 1,000 |
 | **Total** | **14,194** |
 
-The classification data was split using an **80% / 10% / 10% stratified train/validation/test split** with `random_state=42`. The resulting sets contain 11,355 training images, 1,419 validation images, and 1,420 test images. fileciteturn23file0
+The split is **80% train / 10% validation / 10% test**, stratified with `random_state=42`:
 
-The complete raw dataset is intentionally not included in this repository.
+- Train: 11,355
+- Validation: 1,419
+- Test: 1,420
+
+The raw dataset is not included in this repository.
 
 ### Quality Dataset
 
-The quality workflow uses labelled Guava images with four classes:
-
-**A · B · C · Reject**
-
----
+The quality workflow uses labelled Guava images with four classes: **A, B, C, Reject**.
 
 ## 🧪 Quick Inference
-
-Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/prabhtheone/Crop-AI.git
 cd Crop-AI
 pip install -r requirements.txt
-```
-
-Run the included inference helper:
-
-```bash
 python src/predict.py path/to/your/image.jpg
 ```
 
-Or open:
+A small notebook demo is also included at:
 
 `notebook/Crop_AI_Inference_Demo.ipynb`
-
-The demo loads the two released models and runs the same two-stage idea used by the project.
-
----
 
 ## 📁 Repository Structure
 
@@ -133,16 +100,18 @@ Crop-AI/
 │   └── Crop_AI_Inference_Demo.ipynb
 ├── src/
 │   └── predict.py
+├── .github/workflows/ci.yml
 ├── README.md
 ├── LICENSE
 ├── requirements.txt
+├── CITATION.cff
+├── CONTRIBUTING.md
+├── SECURITY.md
 ├── .gitattributes
 └── .gitignore
 ```
 
-The `.keras` model files are tracked with **Git LFS**. The repository does not contain the raw training dataset.
-
----
+The `.keras` files are managed with **Git LFS**. Raw datasets and private credentials are excluded from Git.
 
 ## 🛠️ Tech Stack
 
@@ -157,27 +126,15 @@ The `.keras` model files are tracked with **Git LFS**. The repository does not c
 - Google Colab
 - Git LFS
 
----
-
 ## 📈 Evaluation Notes
 
-The reported accuracies are evaluation results on the project's test data:
-
-- Crop classification: **91.76%** test accuracy. fileciteturn24file2
-- Guava quality grading: **78.27%** test accuracy on a reported 520-image test set. fileciteturn24file3
-
-These numbers are **not guarantees of real-world accuracy**. Results may change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift conditions.
-
----
+The reported accuracies are test-set evaluation results from the project. They are not guarantees of real-world accuracy. Performance can change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift conditions.
 
 ## ⚠️ Limitations
 
-- Quality grading is currently available for **Guava only**.
-- The project is a research/learning prototype, not a professional agricultural diagnosis system.
-- Real-world robustness should be tested on larger and more diverse field images.
-- Dataset licensing and attribution requirements should be checked for any third-party data used outside this repository.
-
----
+- Quality grading is currently designed for Guava only.
+- This is a research/learning prototype, not a professional agricultural diagnosis system.
+- Larger and more diverse real-world testing is still needed.
 
 ## 🔮 Roadmap
 
@@ -192,20 +149,16 @@ These numbers are **not guarantees of real-world accuracy**. Results may change 
 - [ ] Web/mobile deployment
 - [ ] Explainable AI / visual attention
 
----
-
 ## 🤝 Contributing
 
-Ideas, bug reports, experiments, and improvements are welcome. Please open an issue or pull request with enough context to reproduce the change.
+Bug reports, experiments, documentation improvements, and pull requests are welcome. See `CONTRIBUTING.md`.
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE).
+MIT License — see `LICENSE`.
 
 ## ⭐ Support
 
-If Crop AI is useful for your learning, experiments, or agricultural AI work, consider starring the repository and sharing constructive feedback.
-
----
+If you find Crop AI useful for learning or experimentation, consider starring the repository and sharing constructive feedback.
 
 **Built as a student project exploring AI, computer vision, and agriculture. 🌾🤖**
