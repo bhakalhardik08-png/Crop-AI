@@ -1,87 +1,148 @@
 # 🌾 Crop AI — Intelligent Crop Classification & Quality Grading
 
-### Turning Crop Images into Intelligent Agricultural Insights 🤖🌱
+### Computer Vision for Crop Recognition + Guava Quality Analysis 🤖🌱
 
-Crop AI is a deep-learning based agricultural computer-vision project that combines **crop classification** with **crop quality grading**.
+[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://www.tensorflow.org/)
+[![Keras](https://img.shields.io/badge/Keras-Deep%20Learning-red.svg)](https://keras.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-The system first identifies the crop from an image and then, for the supported quality-analysis workflow, can grade **Guava** into **A / B / C / Reject** categories.
+Crop AI is a deep-learning agricultural computer-vision project that uses a **two-stage pipeline**:
+
+1. **Crop classification** — identifies Banana, Guava, Maize, Rice, or Wheat.
+2. **Quality grading** — when the predicted crop is Guava, a second model grades it as **A / B / C / Reject**.
+
+> **Important:** The quality model is currently trained for Guava only. The project does not claim A/B/C/Reject grading for all five crops.
 
 ---
 
-## 🚀 What the Project Does
+## 🚀 Pipeline
 
 ```text
-📷 Input Crop Image
-        ↓
-🖼️ Image Preprocessing (224×224)
-        ↓
-🧠 Crop Classification Model
-        ↓
+📷 Crop Image
+      ↓
+🖼️ Resize to 224 × 224
+      ↓
+🧠 EfficientNetB0 — Crop Classifier
+      ↓
 🌾 Banana / Guava / Maize / Rice / Wheat
-        ↓
-🍈 If Guava → Quality Grading Model
-        ↓
-🏷️ A / B / C / Reject
+      ↓
+   Is it Guava?
+     ↙       ↘
+   YES        NO
+    ↓          ↓
+🍈 EfficientNetB0   Quality: N/A
+ Quality Model
+    ↓
+ A / B / C / Reject
 ```
 
-The final pipeline uses **two trained models** rather than one model containing both tasks:
+The final system uses **two separately trained Keras models**, which makes the crop-recognition and quality-grading stages independently reusable.
 
-1. **Crop Classification Champion** — identifies 5 crop categories.
-2. **Quality Grading Champion** — grades Guava quality into A/B/C/Reject.
+## 🧠 Released Models
 
-The notebook loads the crop champion and quality model separately for the final pipeline. 
+| Model | Architecture | Classes | Recorded test accuracy |
+|---|---|---|---:|
+| Crop Classification Champion | EfficientNetB0 | 5 crops | **91.76%** |
+| Guava Quality Champion | EfficientNetB0 | A / B / C / Reject | **78.27%** |
 
-## 🧠 Models
+### Crop Classification Champion
 
-### 1. Crop Classification Champion
+`model/CROP_MODEL_CHAMPION_91_76_TEST.keras`
 
-**File:** `model/CROP_MODEL_CHAMPION_91_76_TEST.keras`
-
-- Architecture: **EfficientNetB0** transfer learning
+- EfficientNetB0 transfer learning
+- Input: 224 × 224 × 3
 - Classes: Banana, Guava, Maize, Rice, Wheat
-- Test accuracy recorded for the champion: **91.76%**
-- Input size: `224 × 224`
-- Fine-tuned model selected as the project crop-classification champion
+- Recorded final test accuracy: **91.76%**
 
-### 2. Quality Grading Champion
+The training notebook shows the EfficientNetB0 backbone, augmentation, global average pooling, dropout, and a 5-class softmax head. citeturn31file0
 
-**File:** `model/CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras`
+### Guava Quality Champion
 
-- Architecture: **EfficientNetB0**
+`model/CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras`
+
+- EfficientNetB0
+- Input: 224 × 224 × 3
 - Classes: A, B, C, Reject
-- Test accuracy recorded for the champion: **78.27%**
-- Used for the Guava quality-grading workflow
+- Recorded final test accuracy: **78.27%**
+- Evaluation test set reported in the notebook: **520 images**
 
-> **Important:** The quality model is currently used for **Guava** because that is the crop for which the project has quality labels. The pipeline therefore does not claim A/B/C/Reject grading for all five crops.
+The quality model uses EfficientNetB0 with augmentation, global average pooling, dropout, and a 4-class softmax head. citeturn30file1
+
+---
 
 ## 📊 Dataset
 
-### Crop Classification Dataset
+### Crop Classification
 
-- **Total images:** 14,194
-- **Wheat:** 4,000
-- **Rice:** 4,000
-- **Maize:** 4,000
-- **Banana:** 1,194
-- **Guava:** 1,000
-- **Split:** 80% training / 10% validation / 10% test
+**14,194 images total:**
 
-The complete raw dataset is **not included** in this repository.
+| Crop | Images |
+|---|---:|
+| Wheat | 4,000 |
+| Rice | 4,000 |
+| Maize | 4,000 |
+| Banana | 1,194 |
+| Guava | 1,000 |
+| **Total** | **14,194** |
+
+The classification data was split using an **80% / 10% / 10% stratified train/validation/test split** with `random_state=42`. The resulting sets contain 11,355 training images, 1,419 validation images, and 1,420 test images. fileciteturn23file0
+
+The complete raw dataset is intentionally not included in this repository.
 
 ### Quality Dataset
 
-The quality-grading workflow uses labelled Guava images divided into:
+The quality workflow uses labelled Guava images with four classes:
 
 **A · B · C · Reject**
 
-## 📈 Results
+---
 
-| Component | Model | Classes | Recorded Test Accuracy |
-|---|---|---|---:|
-| Crop Classification | EfficientNetB0 | 5 crops | **91.76%** |
-| Guava Quality Grading | EfficientNetB0 | A/B/C/Reject | **78.27%** |
+## 🧪 Quick Inference
 
-> These are recorded evaluation results on the project's test data. They should not be interpreted as guaranteed real-world accuracy. Performance can change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift factors.
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/prabhtheone/Crop-AI.git
+cd Crop-AI
+pip install -r requirements.txt
+```
+
+Run the included inference helper:
+
+```bash
+python src/predict.py path/to/your/image.jpg
+```
+
+Or open:
+
+`notebook/Crop_AI_Inference_Demo.ipynb`
+
+The demo loads the two released models and runs the same two-stage idea used by the project.
+
+---
+
+## 📁 Repository Structure
+
+```text
+Crop-AI/
+├── model/
+│   ├── CROP_MODEL_CHAMPION_91_76_TEST.keras
+│   └── CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras
+├── notebook/
+│   └── Crop_AI_Inference_Demo.ipynb
+├── src/
+│   └── predict.py
+├── README.md
+├── LICENSE
+├── requirements.txt
+├── .gitattributes
+└── .gitignore
+```
+
+The `.keras` model files are tracked with **Git LFS**. The repository does not contain the raw training dataset.
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -89,91 +150,62 @@ The quality-grading workflow uses labelled Guava images divided into:
 - TensorFlow / Keras
 - EfficientNetB0
 - NumPy
+- Pillow
 - Pandas
 - Scikit-learn
 - Matplotlib
 - Google Colab
-
-## 📁 Repository Structure
-
-```text
-Crop-AI/
-├── notebook/
-│   └── Crop_AI_Project.ipynb
-├── model/
-│   ├── CROP_MODEL_CHAMPION_91_76_TEST.keras
-│   └── CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras
-├── screenshots/
-├── src/
-├── README.md
-├── LICENSE
-├── .gitignore
-└── requirements.txt
-```
-
-## ⚡ Getting Started
-
-Clone the repository:
-
-```bash
-git clone https://github.com/prabhtheone/Crop-AI.git
-cd Crop-AI
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Open the main notebook:
-
-```text
-notebook/Crop_AI_Project.ipynb
-```
-
-The notebook contains the dataset preparation, model training/evaluation, crop prediction, quality grading, and final combined prediction workflow.
-
-## 🔮 Roadmap
-
-- [x] Multi-crop image classification
-- [x] EfficientNetB0 transfer learning
-- [x] Data augmentation
-- [x] Crop model evaluation
-- [x] Guava quality analysis
-- [x] A/B/C/Reject quality grading
-- [x] Combined crop + quality prediction pipeline
-- [ ] More diverse real-world robustness testing
-- [ ] Quality grading for additional crops
-- [ ] Web/mobile deployment
-- [ ] Explainable AI / visual attention
-
-## ⚠️ Limitations
-
-This project is a research prototype. Predictions may be affected by image quality, lighting, backgrounds, crop varieties, camera conditions, and differences between training and real-world images.
-
-The quality-grading component is currently designed around **Guava quality labels**, so A/B/C/Reject should not be assumed to apply to every crop category.
-
-The system should not be treated as an agricultural diagnosis or professional decision-making system.
-
-## 📌 Dataset & Model Notes
-
-- Complete raw dataset files are not included because of size and redistribution considerations.
-- Trained champion model files are included in `model/` when repository storage permits.
-- If you use third-party datasets or images, check and comply with their original licenses and attribution requirements.
-
-## 🤝 Contributing
-
-Suggestions, improvements, experiments, and bug reports are welcome. Open an issue or submit a pull request with a clear description of the change.
-
-## 📄 License
-
-This project is licensed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
-
-## ⭐ Support the Project
-
-If you find Crop AI useful for learning, experimentation, or agricultural AI research, consider giving the repository a ⭐ and sharing feedback.
+- Git LFS
 
 ---
 
-**Built by a first year student  who is exploring AI, computer vision, and agriculture. 🌾🤖**
+## 📈 Evaluation Notes
+
+The reported accuracies are evaluation results on the project's test data:
+
+- Crop classification: **91.76%** test accuracy. fileciteturn24file2
+- Guava quality grading: **78.27%** test accuracy on a reported 520-image test set. fileciteturn24file3
+
+These numbers are **not guarantees of real-world accuracy**. Results may change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift conditions.
+
+---
+
+## ⚠️ Limitations
+
+- Quality grading is currently available for **Guava only**.
+- The project is a research/learning prototype, not a professional agricultural diagnosis system.
+- Real-world robustness should be tested on larger and more diverse field images.
+- Dataset licensing and attribution requirements should be checked for any third-party data used outside this repository.
+
+---
+
+## 🔮 Roadmap
+
+- [x] Multi-crop classification
+- [x] EfficientNetB0 transfer learning
+- [x] Crop evaluation
+- [x] Guava quality classification
+- [x] A/B/C/Reject grading
+- [x] Two-stage crop + quality inference
+- [ ] Larger real-world robustness evaluation
+- [ ] Quality labels for additional crops
+- [ ] Web/mobile deployment
+- [ ] Explainable AI / visual attention
+
+---
+
+## 🤝 Contributing
+
+Ideas, bug reports, experiments, and improvements are welcome. Please open an issue or pull request with enough context to reproduce the change.
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE).
+
+## ⭐ Support
+
+If Crop AI is useful for your learning, experiments, or agricultural AI work, consider starring the repository and sharing constructive feedback.
+
+---
+
+**Built as a student project exploring AI, computer vision, and agriculture. 🌾🤖**
