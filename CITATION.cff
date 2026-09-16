@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Crop AI — Intelligent Crop Classification & Quality Grading"
+type: software
+message: "If you use this project in academic or personal work, please cite the repository."
+repository-code: "https://github.com/prabhtheone/Crop-AI"
+authors:
+  - family-names: Singh
+    given-names: Prabhjot
+year: 2026
+license: MIT
+keywords:
+  - agriculture
+  - computer vision
+  - deep learning
+  - crop classification
+  - quality grading
+  - TensorFlow
+  - EfficientNetB0
